@@ -11,11 +11,9 @@ namespace BFS_c_sharp
             RandomDataGenerator generator = new RandomDataGenerator();
             List<UserNode> users = generator.Generate();
 
-            Console.WriteLine($"Minimum Distance between {users[1]} and {users[3]}");
-            Console.WriteLine(MinimumDistance(users[1], users[3]));
-
-            Console.WriteLine($"Traverse from {users[1]}");
+            MinimumDistance(users[1], users[3]);
             Traverse(users[1]);
+            Console.ReadLine();
 
             /*Console.WriteLine("All Users:\n");
             foreach (var user in users)
@@ -27,19 +25,22 @@ namespace BFS_c_sharp
             Console.ReadKey();*/
 
         }
-        public static int MinimumDistance(UserNode fromUser, UserNode toUser)
+        public static void MinimumDistance(UserNode fromUser, UserNode toUser)
         {
             Queue<UserNode> queue = new Queue<UserNode>();
             HashSet<UserNode> visitedUser = new HashSet<UserNode>();
+            Dictionary<UserNode, int> distanceFromRoot = new Dictionary<UserNode, int>();
+
             queue.Enqueue(fromUser);
             visitedUser.Add(fromUser);
+            distanceFromRoot.Add(fromUser, 0);
 
             while (queue.Count > 0)
             {
                 UserNode user = queue.Dequeue();
                 if (user.FirstName == toUser.FirstName && user.LastName == toUser.LastName)
                 {
-                    return visitedUser.Count - 1;
+                    Console.WriteLine($"Minimum Distance between {fromUser} and {toUser}: {distanceFromRoot[user]}");
                 }
 
                 foreach (var friend in user.Friends)
@@ -48,10 +49,11 @@ namespace BFS_c_sharp
                     {
                         queue.Enqueue(friend);
                         visitedUser.Add(friend);
+                        distanceFromRoot.Add(friend, distanceFromRoot[user] + 1);
                     }
                 }
             }
-            return visitedUser.Count - 1;
+            //Console.ReadLine();
         }
 
         public static void Traverse(UserNode fromUser)
@@ -76,7 +78,7 @@ namespace BFS_c_sharp
                     }
                 }
             }
-            Console.WriteLine("Traverse order:\n");
+            Console.WriteLine($"Traverse order from {fromUser}:\n");
             while (traverseOrder.Count > 0)
             {
                 UserNode user = traverseOrder.Dequeue();
