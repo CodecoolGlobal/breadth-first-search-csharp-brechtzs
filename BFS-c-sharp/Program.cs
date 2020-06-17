@@ -10,22 +10,30 @@ namespace BFS_c_sharp
         {
             RandomDataGenerator generator = new RandomDataGenerator();
             List<UserNode> users = generator.Generate();
+            var fromUser = users[1];
+            var toUser = users[3];
+            int distance = 4;
 
-            MinimumDistance(users[1], users[3]);
-            Traverse(users[1]);
-            Console.ReadLine();
 
-            /*Console.WriteLine("All Users:\n");
-            foreach (var user in users)
+            Dictionary<UserNode, int> distanceFromRoot = Traverse(fromUser, toUser);
+            foreach (KeyValuePair<UserNode, int> element in distanceFromRoot)
             {
-                Console.WriteLine(user);
+                if (element.Key.Equals(toUser))
+                {
+                    Console.WriteLine($"Minimum Distance between {fromUser} and {toUser}: {element.Value}");
+                }
+
+                if(element.Value == distance)
+                {
+                    Console.WriteLine($"{element.Key} is {distance} steps from {fromUser}");
+                }
+                
             }
-
-            Console.WriteLine("Done");
-            Console.ReadKey();*/
-
+            Console.ReadLine();
         }
-        public static void MinimumDistance(UserNode fromUser, UserNode toUser)
+
+
+        public static Dictionary<UserNode, int> Traverse(UserNode fromUser, UserNode toUser)
         {
             Queue<UserNode> queue = new Queue<UserNode>();
             HashSet<UserNode> visitedUser = new HashSet<UserNode>();
@@ -38,11 +46,7 @@ namespace BFS_c_sharp
             while (queue.Count > 0)
             {
                 UserNode user = queue.Dequeue();
-                if (user.FirstName == toUser.FirstName && user.LastName == toUser.LastName)
-                {
-                    Console.WriteLine($"Minimum Distance between {fromUser} and {toUser}: {distanceFromRoot[user]}");
-                }
-
+               
                 foreach (var friend in user.Friends)
                 {
                     if (!visitedUser.Contains(friend))
@@ -53,37 +57,7 @@ namespace BFS_c_sharp
                     }
                 }
             }
-            //Console.ReadLine();
-        }
-
-        public static void Traverse(UserNode fromUser)
-        {
-            Queue<UserNode> traverseOrder = new Queue<UserNode>();
-            Queue<UserNode> queue = new Queue<UserNode>();
-            HashSet<UserNode> visitedUser = new HashSet<UserNode>();
-            queue.Enqueue(fromUser);
-            visitedUser.Add(fromUser);
-
-            while (queue.Count > 0)
-            {
-                UserNode user = queue.Dequeue();
-                traverseOrder.Enqueue(user);
-
-                foreach (var friend in user.Friends)
-                {
-                    if (!visitedUser.Contains(friend))
-                    {
-                        queue.Enqueue(friend);
-                        visitedUser.Add(friend);
-                    }
-                }
-            }
-            Console.WriteLine($"Traverse order from {fromUser}:\n");
-            while (traverseOrder.Count > 0)
-            {
-                UserNode user = traverseOrder.Dequeue();
-                Console.WriteLine(user);
-            }
+            return distanceFromRoot;
         }
     }
 }
